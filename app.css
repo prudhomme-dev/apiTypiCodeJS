@@ -1,0 +1,96 @@
+/***************************************************
+GLOBAL
+***************************************************/
+* {
+    box-sizing: border-box;
+    --color-primary: #FFF34D;
+    --color-primary-light: #FFF566;
+    --color-secondary: #4412B3;
+    --color-secondary-light: #844DFF;
+    --color-link: #B3A924;
+    --color-text: black;
+    --color-error: #e67575;
+    --color-question: rgb(36, 143, 36);
+    --color-lowpriority: rgb(230, 255, 194);
+    --color-normalpriority: rgb(252, 255, 103);
+    --color-importantpriority: rgb(248, 176, 176);
+
+}
+
+img {
+    max-width: 100%;
+    vertical-align: middle;
+    height: auto;
+}
+
+iframe {
+    max-width: 100%;
+    display: block;
+}
+
+figure {
+    margin: 0;
+}
+
+.flex {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-content: flex-start;
+}
+
+body {
+    word-wrap: break-word;
+    hyphens: auto;
+    -ms-hyphens: auto;
+    -webkit-hyphens: auto;
+    font-size: 18px;
+    color: var(--color-text);
+}
+
+a {
+    text-decoration: none;
+}
+
+ul,
+li {
+    margin: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin: 0;
+}
+
+main {
+    padding: 15px;
+}
+
+.uncompletedTask {
+    color: green;
+}
+
+.completedTask {
+    color: red
+}
+
+.hiddenTask {
+    display: none;
+}
+
+.deleteTask {
+    border: none;
+    background: none;
+    color: blue;
+    cursor: pointer;
+}
+
+.deleteTask:hover {
+    color: red;
+    text-decoration: underline;
+    transition: 0.5s;
+}
