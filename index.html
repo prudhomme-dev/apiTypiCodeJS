@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Typicode</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+
+    <main id="app">
+        <h1>Exo Typicode VueJS</h1>
+
+        <h2>Liste des utilisateurs</h2>
+        <p>Il y a {{nbUser}} utilisateurs inscrits dans l'application</p>
+        <select id="users" v-model="idUser" v-on:change="choiceUser($event)">
+            <option v-for="user of users" :value="user.id">{{user.name}}</option>
+        </select>
+
+        <userdata v-if="idUser > 0" :datauser="dataUser"></userdata>
+
+
+
+
+
+
+
+    </main>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
