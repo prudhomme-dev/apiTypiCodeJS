@@ -10,3 +10,6 @@ Utilisation de l'API [TypiCode](https://jsonplaceholder.typicode.com/)
 
 - [@prudhomme-dev](https://github.com/prudhomme-dev/)
 
+## Demo
+
+Demonstration accessible sur l'URL : https://prudhomme-dev.github.io/apiTypiCodeJS/
