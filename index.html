@@ -15,16 +15,15 @@
 
     <main id="app">
         <h1>Exo Typicode VueJS</h1>
-
-        <h2>Liste des utilisateurs</h2>
-        <p>Il y a {{nbUser}} utilisateurs inscrits dans l'application</p>
-        <select id="users" v-model="idUser" v-on:change="choiceUser($event)">
-            <option v-for="user of users" :value="user.id">{{user.name}}</option>
-        </select>
-
-        <userdata v-if="idUser > 0" :datauser="dataUser"></userdata>
-
-
+        <section class="choiceUser">
+            <h2>Liste des utilisateurs</h2>
+            <p>Il y a {{nbUser}} utilisateurs inscrits dans l'application</p>
+            <select id="users" v-model="idUser" v-on:change="choiceUser($event)">
+                <option v-for="user of users" :value="user.id">{{user.name}}</option>
+            </select>
+        </section>
+        <userdata v-if="idUser > 0" :datauser="dataUser" :iduser="idUser" :usertask="userTask" :useralbum="userAlbum"
+            :userpost="userPost"></userdata>
     </main>
 
     <script src="app.js"></script>

@@ -3,42 +3,19 @@ let commentpost = {
     <section>
         <h3>Commentaire de l'article {{titlepost}}</h3>
         <div class='flex'>
-            <div v-for="comment of userComment">
+            <div v-for="comment of usercomment">
                 <h5>{{comment.name}} (<a :href="comment.email|mailto">{{comment.email}}</a>)</h5>
                 <p>{{comment.body}}</p>
             </div>
         </div>
     </section>
-    
     `,
-    data: function () {
-        return {
-            userComment: [],
-        }
-    },
     filters: {
         mailto: function (value) {
             return "mailto:" + value
         }
     },
-    props: ['titlepost', 'idpost'],
-    created: function () {
-        this.commentsLists();
-    },
-    updated: function () {
-        this.commentsLists();
-    },
-    methods: {
-        commentsLists: async function () {
-            try {
-                let response = await fetch('https://jsonplaceholder.typicode.com/comments?postId=' + this.idpost);
-                let comments = await response.json();
-                this.userComment = comments;
-            } catch (e) {
-                console.error('ERREUR', e);
-            }
-        }
-    }
+    props: ['titlepost', 'idpost', 'usercomment'],
 
 }
 
@@ -47,38 +24,30 @@ let post = {
     <section>
         <h3>Articles de {{username}}</h3>
         <ul>
-            <li v-for="post of userPost" >
+            <li v-for="post of userpost" >
                 <button v-on:click="displayComments(post.id, post.title)" class="deleteTask">{{post.title}}</button>
             </li>
         </ul>
-        <commentpost v-if="displayComment" :idpost="choiceIdPost" :titlepost="choiceTitlePost"></commentpost>
+        <commentpost v-if="this.$root.displayComment" :idpost="choiceIdPost" :titlepost="choiceTitlePost" :usercomment="userComment"></commentpost>
     </section>
     `,
     data: function () {
         return {
-            userPost: [],
+            userComment: [],
             choiceIdPost: 0,
             choiceTitlePost: '',
-            displayComment: false
         }
     },
-    props: ['iduser', 'username'],
-    created: function () {
-        this.postsList();
-    },
-    updated: function () {
-        this.postsList();
-    },
+    props: ['iduser', 'username', 'userpost'],
     components: {
         commentpost
-
     },
     methods: {
-        postsList: async function () {
+        commentsLists: async function () {
             try {
-                let response = await fetch('https://jsonplaceholder.typicode.com/posts?userId=' + this.iduser);
-                let posts = await response.json();
-                this.userPost = posts;
+                let response = await fetch('https://jsonplaceholder.typicode.com/comments?postId=' + this.choiceIdPost);
+                let comments = await response.json();
+                this.userComment = comments;
             } catch (e) {
                 console.error('ERREUR', e);
             }
@@ -86,11 +55,11 @@ let post = {
         displayComments: function (idPost, titlePost) {
             this.choiceIdPost = idPost;
             this.choiceTitlePost = titlePost;
+            this.commentsLists();
+            this.$root.displayComment = true;
             this.displayComment = true;
         }
-
     }
-
 }
 
 let photo = {
@@ -98,36 +67,14 @@ let photo = {
     <section>
         <h3>Photos de l'album {{titlealbum}}</h3>
         <div class='flex'>
-            <div v-for="photo of userPhoto">
+            <div v-for="photo of userphoto">
                 <h5>{{photo.title}}</h5>
                 <a :href="photo.url" target="_blank"><img :src="photo.thumbnailUrl" :alt="photo.title"></a>
             </div>
         </div>
     </section>
     `,
-    data: function () {
-        return {
-            userPhoto: [],
-        }
-    },
-    props: ['titlealbum', 'idalbum'],
-    created: function () {
-        this.photosLists();
-    },
-    updated: function () {
-        this.photosLists();
-    },
-    methods: {
-        photosLists: async function () {
-            try {
-                let response = await fetch('https://jsonplaceholder.typicode.com/photos?albumId=' + this.idalbum);
-                let photos = await response.json();
-                this.userPhoto = photos;
-            } catch (e) {
-                console.error('ERREUR', e);
-            }
-        }
-    }
+    props: ['titlealbum', 'idalbum', 'userphoto']
 }
 
 let useralbum = {
@@ -135,38 +82,31 @@ let useralbum = {
     <section>
         <h3>Albums photos de {{username}}</h3>
         <ul>
-            <li v-for="album of userAlbum" >
+            <li v-for="album of useralbum" >
             {{album.title}}
             - <button v-on:click="displayPhotos(album.id, album.title)" class="deleteTask">Afficher Photos</button>
             </li>
         </ul>
-        <photo v-if="displayPhoto" :idalbum="choiceAlbum" :titlealbum="choicetitleAlbum"></photo>
+        <photo v-if="this.$root.displayPhoto" :idalbum="choiceAlbum" :titlealbum="choicetitleAlbum" :userphoto="userPhoto"></photo>
     </section>
     `,
     data: function () {
         return {
-            userAlbum: [],
             choiceAlbum: 0,
             choicetitleAlbum: '',
-            displayPhoto: false
+            userPhoto: []
         }
     },
-    props: ['iduser', 'username'],
-    created: function () {
-        this.albumsList();
-    },
-    updated: function () {
-        this.albumsList();
-    },
+    props: ['iduser', 'username', 'useralbum'],
     components: {
         photo
     },
     methods: {
-        albumsList: async function () {
+        photosLists: async function () {
             try {
-                let response = await fetch('https://jsonplaceholder.typicode.com/albums?userId=' + this.iduser);
-                let albums = await response.json();
-                this.userAlbum = albums;
+                let response = await fetch('https://jsonplaceholder.typicode.com/photos?albumId=' + this.choiceAlbum);
+                let photos = await response.json();
+                this.userPhoto = photos;
             } catch (e) {
                 console.error('ERREUR', e);
             }
@@ -175,21 +115,23 @@ let useralbum = {
             this.displayPhoto = true;
             this.choiceAlbum = idAlbum;
             this.choicetitleAlbum = titleAlbum;
+            this.$root.displayPhoto = true;
+            this.photosLists();
         }
     }
 }
 
 let usertask = {
     template: `
-    <section>
+    <section id="userTask">
         <h3>Tâche à réaliser pour l'utilisateur {{username}}</h3>
         <button v-if="!hiddenCompleted" v-on:click="hiddenTaskCompleted()">Cacher les tâches déjà réalisées</button>
         <button v-else v-on:click="hiddenTaskCompleted()">Afficher les tâches déjà réalisées</button>
         <ul>
-            <li v-for="(task, index) of userTask" >
+            <li v-for="(task, index) of usertask" >
             <span v-if="task.completed" class="task completedTask">{{task.title}}</span>
             <span v-else class="task uncompletedTask">{{task.title}}</span>
-            - <button v-on:click="deleteTask($event)" class="deleteTask" :data-index="index">Supprimer</button>
+            - <button v-on:click="deleteTask($event)" class="deleteTask" :data-index="task.id">Supprimer</button>
             </li>
 
         </ul>
@@ -197,27 +139,11 @@ let usertask = {
     `,
     data: function () {
         return {
-            userTask: [],
             hiddenCompleted: false
         }
     },
-    props: ['iduser', 'username'],
-    created: function () {
-        this.tasksList();
-    },
-    updated: function () {
-        this.tasksList();
-    },
+    props: ['iduser', 'username', 'usertask'],
     methods: {
-        tasksList: async function () {
-            try {
-                let response = await fetch('https://jsonplaceholder.typicode.com/todos?userId=' + this.iduser);
-                let tasks = await response.json();
-                this.userTask = tasks;
-            } catch (e) {
-                console.error('ERREUR', e);
-            }
-        },
         hiddenTaskCompleted: function () {
             let taskCompleted = document.querySelectorAll(".completedTask")
             for (task of taskCompleted) {
@@ -226,51 +152,38 @@ let usertask = {
             this.hiddenCompleted = !this.hiddenCompleted
         },
         deleteTask: function (e) {
-            this.userTask.splice(e.target.dataset.index, 1)
+            this.usertask.splice(this.usertask.findIndex(result => result.id == e.target.dataset.index), 1)
         }
     }
 }
 
 let userdata = {
-    template: `<section>
+    template: `<section id="userData">
         <h3>{{datauser.name}} ({{datauser.username}})</h3>
-        <p>id : {{datauser.id}}</p>
+        <p class="title">Id : {{datauser.id}}</p>
         <ul>
-            <li>email : {{datauser.email}}</li>
-            <li>tel : {{datauser.phone}}</li>
-            <li>web : <a :href="datauser.website|webSite" target="_blank">{{datauser.website}}</a></li>
+            <li><span class="title">E-Mail</span> : {{datauser.email}}</li>
+            <li><span class="title">tel</span> : {{datauser.phone}}</li>
+            <li><span class="title">Site Web</span> : <a :href="datauser.website|webSite" target="_blank">{{datauser.website}}</a></li>
         </ul>
-        <p>Adresse : 
+        <p><span class="title">Adresse</span> : 
         <span v-for="addressData in datauser.address">{{addressData}} - </span>
         </p>
         
-        <p>Entreprise : {{datauser.company.name}}</p>
-        <p>
+        <p><span class="title">Entreprise </span>: {{datauser.company.name}}</p>
+        <p class="actionUser">
             <button v-on:click="activeDisplayTask()">Voir les tâches</button>
             <button v-on:click="activeDisplayAlbum()">Voir les albums</button>
             <button v-on:click="activeDisplayPost()">Voir les articles</button>
         </p>
 
-        <usertask v-if="displayTask" :iduser="idUser" :username="datauser.name"></usertask>
-        <useralbum v-if="displayAlbum" :iduser="idUser" :username="datauser.name"></useralbum>
-        <post v-if="displayPost" :iduser="idUser" :username="datauser.name"></post>
+        <usertask v-if="displayTask" :iduser="iduser" :username="datauser.name" :usertask="usertask"></usertask>
+        <useralbum v-if="displayAlbum" :iduser="iduser" :username="datauser.name" :useralbum="useralbum"></useralbum>
+        <post v-if="displayPost" :iduser="iduser" :username="datauser.name" :userpost="userpost"></post>
 
     </section>
 
     `,
-    created: function () {
-        this.idUser = this.datauser.id;
-    },
-    updated: function () {
-        let idUserOld = this.idUser
-        this.idUser = this.datauser.id;
-        if (idUserOld != this.idUser) {
-            this.displayAlbum = false;
-            this.displayTask = false;
-            this.displayPost = false;
-        }
-
-    },
     components: {
         usertask,
         useralbum,
@@ -278,13 +191,12 @@ let userdata = {
     },
     data: function () {
         return {
-            idUser: 0,
             displayTask: false,
             displayAlbum: false,
-            displayPost: false
+            displayPost: false,
         }
     },
-    props: ['datauser'],
+    props: ['datauser', 'iduser', 'usertask', 'userpost', 'useralbum'],
     filters: {
         webSite: function (value) {
             return "https://" + value
@@ -292,6 +204,7 @@ let userdata = {
     },
     methods: {
         activeDisplayTask: function () {
+            this.tasksList()
             this.displayTask = !this.displayTask;
             this.displayAlbum = false;
             this.displayPost = false;
@@ -305,6 +218,15 @@ let userdata = {
             this.displayAlbum = false;
             this.displayPost = !this.displayPost;
             this.displayTask = false;
+        },
+        tasksList: async function () {
+            try {
+                let response = await fetch('https://jsonplaceholder.typicode.com/todos?userId=' + this.iduser);
+                let tasks = await response.json();
+                this.userTask = tasks;
+            } catch (e) {
+                console.error('ERREUR', e);
+            }
         }
     }
 }
@@ -314,7 +236,16 @@ let app = new Vue({
     data: {
         users: [],
         idUser: 0,
-        dataUser: []
+        dataUser: [],
+        displayTask: false,
+        displayAlbum: false,
+        displayPost: false,
+        displayPhoto: false,
+        displayComment: false,
+        userTask: [],
+        userAlbum: [],
+        userPost: []
+
     },
     computed: {
         nbUser: function () {
@@ -328,20 +259,38 @@ let app = new Vue({
         userdata
     },
     methods: {
-        // loadUsers: function () {
-        //     fetch('https://jsonplaceholder.typicode.com/users')
-        //         .then(response => response.json())
-        //         .then(users => {
-        //             console.log(users)
-        //             this.users = users
-        //         })
-        // }
-
         loadUsers: async function () {
             try {
                 let response = await fetch('https://jsonplaceholder.typicode.com/users');
                 let users = await response.json();
                 this.users = users;
+            } catch (e) {
+                console.error('ERREUR', e);
+            }
+        },
+        postsList: async function () {
+            try {
+                let response = await fetch('https://jsonplaceholder.typicode.com/posts?userId=' + this.idUser);
+                let posts = await response.json();
+                this.userPost = posts;
+            } catch (e) {
+                console.error('ERREUR', e);
+            }
+        },
+        tasksList: async function () {
+            try {
+                let response = await fetch('https://jsonplaceholder.typicode.com/todos?userId=' + this.idUser);
+                let tasks = await response.json();
+                this.userTask = tasks;
+            } catch (e) {
+                console.error('ERREUR', e);
+            }
+        },
+        albumsList: async function () {
+            try {
+                let response = await fetch('https://jsonplaceholder.typicode.com/albums?userId=' + this.idUser);
+                let albums = await response.json();
+                this.userAlbum = albums;
             } catch (e) {
                 console.error('ERREUR', e);
             }
@@ -352,12 +301,12 @@ let app = new Vue({
                 if (user.id == e.target.value) {
                     this.dataUser = user;
                 }
-            });
+            })
+            this.tasksList();
+            this.postsList();
+            this.albumsList();
+            this.displayPhoto = false;
+            this.displayComment = false;
         }
-
-
-
     }
-
-
 })
