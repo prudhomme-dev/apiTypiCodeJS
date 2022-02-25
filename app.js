@@ -1,9 +1,9 @@
 let commentpost = {
     template: `
-    <section>
+    <section id="comments">
         <h3>Commentaire de l'article {{titlepost}}</h3>
         <div class='flex'>
-            <div v-for="comment of usercomment">
+            <div class="comment" v-for="comment of usercomment">
                 <h5>{{comment.name}} (<a :href="comment.email|mailto">{{comment.email}}</a>)</h5>
                 <p>{{comment.body}}</p>
             </div>
@@ -25,7 +25,7 @@ let post = {
         <h3>Articles de {{username}}</h3>
         <ul>
             <li v-for="post of userpost" >
-                <button v-on:click="displayComments(post.id, post.title)" class="deleteTask">{{post.title}}</button>
+                <button v-on:click="displayComments(post.id, post.title)" class="link">{{post.title}}</button>
             </li>
         </ul>
         <commentpost v-if="this.$root.displayComment" :idpost="choiceIdPost" :titlepost="choiceTitlePost" :usercomment="userComment"></commentpost>
@@ -64,10 +64,10 @@ let post = {
 
 let photo = {
     template: `
-    <section>
+    <section id="photos">
         <h3>Photos de l'album {{titlealbum}}</h3>
         <div class='flex'>
-            <div v-for="photo of userphoto">
+            <div class="photo" v-for="photo of userphoto">
                 <h5>{{photo.title}}</h5>
                 <a :href="photo.url" target="_blank"><img :src="photo.thumbnailUrl" :alt="photo.title"></a>
             </div>
@@ -84,7 +84,7 @@ let useralbum = {
         <ul>
             <li v-for="album of useralbum" >
             {{album.title}}
-            - <button v-on:click="displayPhotos(album.id, album.title)" class="deleteTask">Afficher Photos</button>
+            - <button v-on:click="displayPhotos(album.id, album.title)" class="link">Afficher Photos</button>
             </li>
         </ul>
         <photo v-if="this.$root.displayPhoto" :idalbum="choiceAlbum" :titlealbum="choicetitleAlbum" :userphoto="userPhoto"></photo>
@@ -131,7 +131,7 @@ let usertask = {
             <li v-for="(task, index) of usertask" >
             <span v-if="task.completed" class="task completedTask">{{task.title}}</span>
             <span v-else class="task uncompletedTask">{{task.title}}</span>
-            - <button v-on:click="deleteTask($event)" class="deleteTask" :data-index="task.id">Supprimer</button>
+            - <button v-on:click="deleteTask($event)" class="link" :data-index="task.id">Supprimer</button>
             </li>
 
         </ul>
@@ -162,12 +162,12 @@ let userdata = {
         <h3>{{datauser.name}} ({{datauser.username}})</h3>
         <p class="title">Id : {{datauser.id}}</p>
         <ul>
-            <li><span class="title">E-Mail</span> : {{datauser.email}}</li>
-            <li><span class="title">tel</span> : {{datauser.phone}}</li>
+            <li><span class="title">E-Mail</span> : <a :href="datauser.email|mailto">{{datauser.email}}</a></li>
+            <li><span class="title">Téléphone</span> : <a :href="datauser.phone|phoneLink">{{datauser.phone}}</a></li>
             <li><span class="title">Site Web</span> : <a :href="datauser.website|webSite" target="_blank">{{datauser.website}}</a></li>
         </ul>
         <p><span class="title">Adresse</span> : 
-        <span v-for="addressData in datauser.address">{{addressData}} - </span>
+        {{datauser.address.street}} - {{datauser.address.suite}} - {{datauser.address.zipcode}} {{datauser.address.city}}
         </p>
         
         <p><span class="title">Entreprise </span>: {{datauser.company.name}}</p>
@@ -200,34 +200,30 @@ let userdata = {
     filters: {
         webSite: function (value) {
             return "https://" + value
+        },
+        phoneLink: function (value) {
+            return "tel://" + value
+        },
+        mailto: function (value) {
+            return "mailto:" + value
         }
     },
     methods: {
         activeDisplayTask: function () {
-            this.tasksList()
-            this.displayTask = !this.displayTask;
+            this.displayTask = true;
             this.displayAlbum = false;
             this.displayPost = false;
         },
         activeDisplayAlbum: function () {
-            this.displayAlbum = !this.displayAlbum;
+            this.displayAlbum = true;
             this.displayPost = false;
             this.displayTask = false;
         },
         activeDisplayPost: function () {
             this.displayAlbum = false;
-            this.displayPost = !this.displayPost;
+            this.displayPost = true;
             this.displayTask = false;
         },
-        tasksList: async function () {
-            try {
-                let response = await fetch('https://jsonplaceholder.typicode.com/todos?userId=' + this.iduser);
-                let tasks = await response.json();
-                this.userTask = tasks;
-            } catch (e) {
-                console.error('ERREUR', e);
-            }
-        }
     }
 }
 
@@ -237,9 +233,6 @@ let app = new Vue({
         users: [],
         idUser: 0,
         dataUser: [],
-        displayTask: false,
-        displayAlbum: false,
-        displayPost: false,
         displayPhoto: false,
         displayComment: false,
         userTask: [],

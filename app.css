@@ -79,6 +79,15 @@ h3 {
     font-size: 22px;
 }
 
+a {
+    color: var(--color-secondary);
+}
+
+a:hover {
+    color: var(--color-primary-dark);
+    transition: 0.5s;
+}
+
 .choiceUser {
     border: 1px solid var(--color-primary-dark);
     border-radius: 20px;
@@ -161,15 +170,50 @@ button:hover {
 }
 
 
-.deleteTask {
+.link {
     border: none;
     background: none;
     color: var(--color-primary-dark);
     cursor: pointer;
 }
 
-.deleteTask:hover {
+.link:hover {
     color: var(--color-secondary);
     text-decoration: underline;
     transition: 0.5s;
+}
+
+#photos,
+#comments {
+    margin: 25px 0;
+}
+
+#photos h3,
+#comments h3 {
+    padding: 15px 0;
+}
+
+#photos h5,
+#comments h5 {
+    padding: 8px;
+}
+
+.photo {
+    width: 30%;
+    border: 1px solid var(--color-secondary);
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.photo img {
+    padding: 10px;
+}
+
+.comment {
+    border: 1px solid var(--color-secondary);
+    margin-bottom: 15px;
+}
+
+.comment p {
+    padding: 0 8px;
 }
