@@ -127,8 +127,11 @@ let usertask = {
         <h3>Tâche à réaliser pour l'utilisateur {{username}}</h3>
         <button v-if="!hiddenCompleted" v-on:click="hiddenTaskCompleted()">Cacher les tâches déjà réalisées</button>
         <button v-else v-on:click="hiddenTaskCompleted()">Afficher les tâches déjà réalisées</button>
+        <input type="text" id="addTask" v-on:keyup="addTask($event, iduser, usertask)" placeholder="Ajouter une tâche">
         <ul>
             <li v-for="(task, index) of usertask" >
+            <input v-if="task.completed" type="checkbox" :data-index="task.id" v-on:change="changeStatusTask($event)" checked>
+            <input v-else type="checkbox" :data-index="task.id" v-on:change="changeStatusTask($event)">
             <span v-if="task.completed" class="task completedTask">{{task.title}}</span>
             <span v-else class="task uncompletedTask">{{task.title}}</span>
             - <button v-on:click="deleteTask($event)" class="link" :data-index="task.id">Supprimer</button>
@@ -153,6 +156,22 @@ let usertask = {
         },
         deleteTask: function (e) {
             this.usertask.splice(this.usertask.findIndex(result => result.id == e.target.dataset.index), 1)
+        },
+        addTask: function (e, idUser, currentTasks) {
+            if (e.key == "Enter" && e.target.value.length > 0) {
+                let nextId = currentTasks[(currentTasks.length - 1)].id + 1;
+                this.usertask.unshift({
+                    'completed': false,
+                    'id': nextId,
+                    'title': e.target.value,
+                    'userId': idUser
+                });
+                e.target.value = "";
+            }
+        },
+        changeStatusTask: function (e) {
+            let index = this.usertask.findIndex(result => result.id == e.target.dataset.index);
+            this.usertask[index].completed = !this.usertask[index].completed;
         }
     }
 }

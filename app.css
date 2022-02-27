@@ -98,7 +98,8 @@ a:hover {
 }
 
 select,
-option {
+option,
+input {
     border: 1px solid var(--color-primary-dark);
     outline: none;
     text-align: center;
@@ -108,6 +109,10 @@ option {
 select:focus,
 option:focus {
     outline: 1px solid var(--color-primary-dark);
+}
+
+input::placeholder {
+    color: var(--color-secondary);
 }
 
 #userData {
@@ -137,12 +142,17 @@ li::before {
     padding: 0 5px;
 }
 
+#userTask li::before {
+    content: "";
+}
+
 .uncompletedTask {
     color: green;
 }
 
 .completedTask {
-    color: red
+    color: red;
+    text-decoration: line-through;
 }
 
 .hiddenTask {
